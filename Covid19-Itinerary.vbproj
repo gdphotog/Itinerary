@@ -121,6 +121,7 @@
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
     <None Include="App.config" />
+    <None Include="Readme.md" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="lobal-pandemic-globe%402x.ico" />
