@@ -19,6 +19,9 @@ Public Class Form1
     Public dateformat As String = "MM/dd/yyyy"
     Public userdesktop As String = Environment.GetFolderPath(Environment.SpecialFolder.Desktop)
     Public desktopdi As DirectoryInfo
+    Public StaffName As String = "COVID 19, Test User"
+    Public Staffid As Integer = 10000
+    Public cruiseline As String
     Public DebugON As Boolean = False
 
 
@@ -161,6 +164,7 @@ Public Class Form1
         dt.Columns.Add("port_id")
 
         'Set Port to Miami for day 1 and last day
+        'Iterates through the length of the cruise amd sets the ports
 
         For dayofcruise = 0 To maxdays
             workingdate = DtpEmbarkation.Value
@@ -180,20 +184,64 @@ Public Class Form1
                 portcode = seaday
             End If
 
+            'Add the row to the Datatable
+
             dt.Rows.Add(Twocharshipcode, validatedvoyage, portdate, portcode)
         Next
 
+        'Write out the Array to a stringbuilder format
         Dim sb As New StringBuilder
-        Dim finalcsvfile As String = "Itinerary_" & Twocharshipcode & "_" & validatedvoyage & ".csv"
-        Dim fullpath As String = Path.Combine(userdesktop, finalcsvfile)
+        Dim finalItineraryfile As String = "Itinerary_" & Twocharshipcode & "_" & validatedvoyage & ".csv"
+        Dim fullpath As String = Path.Combine(userdesktop, finalItineraryfile)
+
+        'Checks the Desktop folder exists
         desktopdi = New DirectoryInfo(userdesktop)
         If Not desktopdi.Exists Then
             desktopdi.Create()
 
         End If
-        Dim streampath As String = fullpath
-        Using writer As StreamWriter = New StreamWriter(streampath)
+        Dim itinerarystreampath As String = fullpath
+
+        'Writes the Stringbuilder to file as a stream. The CSV file is RFC4180 compliant.
+        'https://tools.ietf.org/html/rfc4180
+
+        Using writer As StreamWriter = New StreamWriter(itinerarystreampath)
             Rfc4180Writer.WriteDataTable(dt, writer, True)
+        End Using
+
+        'Sets the variables for the Staff and Photogtype for the Staff file.
+        Dim photogtype As String
+        Dim staffdt As New DataTable
+
+        'Creates the datatable format for the Staff CSV file
+        staffdt.Columns.Add("ship_code")
+        staffdt.Columns.Add("voyage_num")
+        staffdt.Columns.Add("photog_id")
+        staffdt.Columns.Add("photog_type")
+        staffdt.Columns.Add("name_prefix")
+        staffdt.Columns.Add("name")
+
+        If cruiseline = "RCI" Then
+            'Sets the Photog Type to Lab Tech for Royal
+            photogtype = "RPLT"
+        ElseIf cruiseline = "CEL" Then
+            'Sets the Photog Type to Lab Tech for CEL.
+            photogtype = "CPLT"
+        End If
+
+        staffdt.Rows.Add(Twocharshipcode, validatedvoyage, Staffid, photogtype, "Mr", StaffName)
+
+        Dim staffsb As New StringBuilder
+        Dim finalStafffile As String = "Staff_" & Twocharshipcode & "_" & validatedvoyage & ".csv"
+        Dim stafffullpath As String = Path.Combine(userdesktop, finalStafffile)
+
+        Dim staffstreampath As String = stafffullpath
+
+        'Writes the Stringbuilder to file as a stream. The CSV file is RFC4180 compliant.
+        'https://tools.ietf.org/html/rfc4180
+
+        Using writer As StreamWriter = New StreamWriter(staffstreampath)
+            Rfc4180Writer.WriteDataTable(staffdt, writer, True)
         End Using
 
         MsgBox("Done")
@@ -203,88 +251,130 @@ Public Class Form1
 
     Public Function getshipcode(inputstring)
         If inputstring = "Adventure of the Seas" Then
+            cruiseline = "RCI"
             Return "AD"
         ElseIf inputstring = "Allure of the Seas" Then
+            cruiseline = "RCI"
             Return "AL"
         ElseIf inputstring = "Anthem of the Seas" Then
+            cruiseline = "RCI"
             Return "AN"
         ElseIf inputstring = "Brilliance of the Seas" Then
+            cruiseline = "RCI"
             Return "BR"
         ElseIf inputstring = "Enchantment of the Seas" Then
+            cruiseline = "RCI"
             Return "EN"
         ElseIf inputstring = "Explorer of the Seas" Then
+            cruiseline = "RCI"
             Return "EX"
         ElseIf inputstring = "Freedom of the Seas" Then
+            cruiseline = "RCI"
             Return "FR"
         ElseIf inputstring = "Grandeur of the Seas" Then
+            cruiseline = "RCI"
             Return "GR"
         ElseIf inputstring = "Harmony of the Seas" Then
+            cruiseline = "RCI"
             Return "HM"
         ElseIf inputstring = "Independence of the Seas" Then
+            cruiseline = "RCI"
             Return "ID"
         ElseIf inputstring = "Jewel of the Seas" Then
+            cruiseline = "RCI"
             Return "JW"
         ElseIf inputstring = "Liberty of the Seas" Then
+            cruiseline = "RCI"
             Return "LB"
         ElseIf inputstring = "Majesty of the Seas" Then
+            cruiseline = "RCI"
             Return "MJ"
         ElseIf inputstring = "Mariner of the Seas" Then
+            cruiseline = "RCI"
             Return "MA"
         ElseIf inputstring = "Navigator of the Seas" Then
+            cruiseline = "RCI"
             Return "NV"
         ElseIf inputstring = "Empress of the Seas" Then
+            cruiseline = "RCI"
             Return "NE"
         ElseIf inputstring = "Oasis of the Seas" Then
+            cruiseline = "RCI"
             Return "OA"
         ElseIf inputstring = "Ovation of the Seas" Then
+            cruiseline = "RCI"
             Return "OV"
         ElseIf inputstring = "Odyssey of the Seas" Then
+            cruiseline = "RCI"
             Return "OY"
         ElseIf inputstring = "Quantum of the Seas" Then
+            cruiseline = "RCI"
             Return "QN"
         ElseIf inputstring = "Radiance of the Seas" Then
+            cruiseline = "RCI"
             Return "RD"
         ElseIf inputstring = "Rhapsody of the Seas" Then
+            cruiseline = "RCI"
             Return "RH"
         ElseIf inputstring = "Serenade of the Seas" Then
+            cruiseline = "RCI"
             Return "SR"
         ElseIf inputstring = "Spectrum of the Seas" Then
+            cruiseline = "RCI"
             Return "SC"
         ElseIf inputstring = "Symphony of the Seas" Then
+            cruiseline = "RCI"
             Return "SY"
         ElseIf inputstring = "Vision of the Seas" Then
+            cruiseline = "RCI"
             Return "VI"
         ElseIf inputstring = "Voyager of the Seas" Then
+            cruiseline = "RCI"
             Return "VY"
         ElseIf inputstring = "Wonder of the Seas" Then
+            cruiseline = "RCI"
             Return "WN"
         ElseIf inputstring = "Ascent" Then
+            cruiseline = "CEL"
             Return "AS"
         ElseIf inputstring = "Apex" Then
+            cruiseline = "CEL"
             Return "AX"
         ElseIf inputstring = "Beyond" Then
+            cruiseline = "CEL"
             Return "BY"
         ElseIf inputstring = "Constellation" Then
+            cruiseline = "CEL"
             Return "CS"
         ElseIf inputstring = "Eclipse" Then
+            cruiseline = "CEL"
             Return "EC"
         ElseIf inputstring = "Edge" Then
+            cruiseline = "CEL"
             Return "EG"
         ElseIf inputstring = "Equinox" Then
+            cruiseline = "CEL"
             Return "EQ"
         ElseIf inputstring = "Infinity" Then
+            cruiseline = "CEL"
             Return "IN"
         ElseIf inputstring = "Millennium" Then
+            cruiseline = "CEL"
             Return "ML"
         ElseIf inputstring = "Reflection" Then
+            cruiseline = "CEL"
             Return "RF"
         ElseIf inputstring = "Silhouette" Then
+            cruiseline = "CEL"
             Return "SI"
         ElseIf inputstring = "Solstice" Then
+            cruiseline = "CEL"
             Return "SL"
         ElseIf inputstring = "Summit" Then
+            cruiseline = "CEL"
             Return "SM"
         Else
+            cruiseline = ""
             Return ""
         End If
 
