@@ -23,30 +23,43 @@ Public Class Form1
     Public Staffid As Integer = 10000
     Public cruiseline As String
     Public DebugON As Boolean = False
+    Public firstrun As Boolean = True
 
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         'Call the reset Date Picker and ShipCode & Days
 
-        ResetForm()
 
+        If firstrun = True Then
+            Setupform()
+            firstrun = False
+
+        Else
+        ResetForm()
+        End If
 
     End Sub
-
-
-    Private Sub ResetForm()
+    Private Sub setupform()
         Populate_Days()
         PopulateShipcodes()
-        Reset_Date_Picker()
-        Reset_Voyage_Number()
         If ApplicationDeployment.IsNetworkDeployed Then
             lblVersionNumber.Text = "Application Version: " & ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString
         Else
             lblVersionNumber.Text = "Application Version: " & Application.ProductVersion
         End If
+
+    End Sub
+
+    Private Sub ResetForm()
+        Reset_ship()
+        Reset_days()
+        Reset_Date_Picker()
+        Reset_Voyage_Number()
+
     End Sub
 
     Private Sub PopulateShipcodes()
+        CboShipPicker.Items.Add(" ")
         CboShipPicker.Items.Add("Adventure of the Seas")
         CboShipPicker.Items.Add("Allure of the Seas")
         CboShipPicker.Items.Add("Anthem of the Seas")
@@ -97,15 +110,20 @@ Public Class Form1
 
     Private Sub Populate_Days()
         Dim i As Integer
-        For i = 1 To 45
+        For i = 0 To 45
             CboNumberOfDays.Items.Add(i)
         Next
         CboNumberOfDays.Text = "0"
     End Sub
 
+    Private Sub Reset_ship()
+        CboNumberOfDays.Text = " "
+    End Sub
+    Private Sub Reset_days()
+        CboNumberOfDays.Text = "0"
+    End Sub
     Private Sub Reset_Date_Picker()
         DtpEmbarkation.Value = Now
-
     End Sub
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
 
@@ -134,7 +152,7 @@ Public Class Form1
 
 
         'Set the cruise days from the combo box pushing an error if it is blank.
-        If CboNumberOfDays.Text = "" Then
+        If CboNumberOfDays.Text = "0" Then
             MsgBox("Set a valid cruise length")
             Exit Sub
         Else
@@ -144,7 +162,7 @@ Public Class Form1
 
         End If
 
-        If CboShipPicker.Text.ToString = "" Then
+        If CboShipPicker.Text.ToString = " " Then
             MsgBox("No Ship assigned")
             Exit Sub
         Else
