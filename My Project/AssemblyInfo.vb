@@ -9,7 +9,7 @@ Imports System.Runtime.InteropServices
 ' Review the values of the assembly attributes
 
 <Assembly: AssemblyTitle("Covid19-Itinerary")>
-<Assembly: AssemblyDescription("")>
+<Assembly: AssemblyDescription("Cold Shutdown Itinerary generator for IQ Photo system on RCCL ships")>
 <Assembly: AssemblyCompany("")>
 <Assembly: AssemblyProduct("Covid19-Itinerary")>
 <Assembly: AssemblyCopyright("Copyright ©  2020")>
@@ -31,5 +31,5 @@ Imports System.Runtime.InteropServices
 ' by using the '*' as shown below:
 ' <Assembly: AssemblyVersion("1.0.*")>
 
-<Assembly: AssemblyVersion("1.0.0.0")>
-<Assembly: AssemblyFileVersion("1.0.0.0")>
+<Assembly: AssemblyVersion("1.0.0.2")>
+<Assembly: AssemblyFileVersion("1.0.0.2")>
