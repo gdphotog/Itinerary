@@ -121,11 +121,12 @@ Public Class Form1
     End Sub
     Private Sub Reset_days()
         CboNumberOfDays.Text = "0"
+        lblCalcEndDate.Text = " "
     End Sub
     Private Sub Reset_Date_Picker()
         DtpEmbarkation.Value = Now
     End Sub
-    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles btnCreateFile.Click
 
         Dim Cruisecounter As Integer = 0
         Dim dayofcruise As Integer
@@ -423,6 +424,33 @@ Public Class Form1
         End Function
     End Class
 
+    Private Sub DtpEmbarkation_ValueChanged(sender As Object, e As EventArgs) Handles DtpEmbarkation.ValueChanged
+        'Checks Date changed and then calculates the end date based on number of days
+        Dateadditions()
+
+
+    End Sub
+
+    Private Sub CboNumberOfDays_SelectedIndexChanged(sender As Object, e As EventArgs) Handles CboNumberOfDays.SelectedIndexChanged
+        'Checks number of days and then updates the end date.
+        Dateadditions()
+    End Sub
+
+
+    Private Sub Dateadditions()
+        Dim enddate As DateTime
+        If CboNumberOfDays.Text = "0" Then
+
+            Exit Sub
+        Else
+            If Integer.TryParse(CboNumberOfDays.Text, days) Then
+                'Correct
+                enddate = DtpEmbarkation.Value.AddDays(days)
+                lblEndDatedisplay.Text = enddate.ToString("dddd, MMMM dd, yyyy")
+            End If
+
+        End If
+    End Sub
 End Class
 
 
