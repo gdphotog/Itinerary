@@ -39,7 +39,7 @@ Public Class Form1
         End If
 
     End Sub
-    Private Sub setupform()
+    Private Sub Setupform()
         Populate_Days()
         PopulateShipcodes()
         If ApplicationDeployment.IsNetworkDeployed Then
@@ -146,7 +146,7 @@ Public Class Form1
                 Exit Sub
             End If
         Else
-            MsgBox("Voyage number is not valid")
+            MsgBox("Voyage number is not valid. It must be numerical only")
             Exit Sub
 
         End If
