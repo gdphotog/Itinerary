@@ -81,7 +81,7 @@ Partial Class Form1
         Me.btnCreateFile.Name = "btnCreateFile"
         Me.btnCreateFile.Size = New System.Drawing.Size(549, 54)
         Me.btnCreateFile.TabIndex = 6
-        Me.btnCreateFile.Text = "Create Itinerary File on Desktop"
+        Me.btnCreateFile.Text = "Create Cruise Files on Desktop"
         Me.btnCreateFile.UseVisualStyleBackColor = True
         '
         'CboShipPicker

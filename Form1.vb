@@ -1,4 +1,5 @@
-﻿Imports System.Text
+﻿
+Imports System.Text
 Imports System.IO
 Imports System.Deployment.Application
 
@@ -24,16 +25,20 @@ Public Class Form1
     Public numberofguests As Integer = 10
     Public runmode As String
     Public manifest As Boolean
-    Dim mOnesArray(8) As String
-    Dim mOneTensArray(9) As String
-    Dim mTensArray(7) As String
-    Dim mPlaceValues(4) As String
+    Public mOnesArray(8) As String
+    Public mOneTensArray(9) As String
+    Public mTensArray(7) As String
+    Public mPlaceValues(4) As String
+    Dim random As New Random()
+
+
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         'Call the reset Date Picker and ShipCode & Days
 
 
         If firstrun = True Then
+
             'Read settings from app config file
             Try
                 DebugON = Convert.ToBoolean(My.Settings.DebugOn)
@@ -66,8 +71,10 @@ Public Class Form1
 
     End Sub
     Private Sub Setupform()
-        Populate_Days()
+        populatewords()
         PopulateShipcodes()
+        Populate_Days()
+
         If ApplicationDeployment.IsNetworkDeployed Then
             lblVersionNumber.Text = "Application Version: " & ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString
         Else
@@ -76,6 +83,45 @@ Public Class Form1
 
     End Sub
 
+    Private Sub populatewords()
+
+        mOnesArray(0) = "one"
+        mOnesArray(1) = "two"
+        mOnesArray(2) = "three"
+        mOnesArray(3) = "four"
+        mOnesArray(4) = "five"
+        mOnesArray(5) = "six"
+        mOnesArray(6) = "seven"
+        mOnesArray(7) = "eight"
+        mOnesArray(8) = "nine"
+
+        mOneTensArray(0) = "ten"
+        mOneTensArray(1) = "eleven"
+        mOneTensArray(2) = "twelve"
+        mOneTensArray(3) = "thirteen"
+        mOneTensArray(4) = "fourteen"
+        mOneTensArray(5) = "fifteen"
+        mOneTensArray(6) = "sixteen"
+        mOneTensArray(7) = "seventeen"
+        mOneTensArray(8) = "eightteen"
+        mOneTensArray(9) = "nineteen"
+
+        mTensArray(0) = "twenty"
+        mTensArray(1) = "thirty"
+        mTensArray(2) = "forty"
+        mTensArray(3) = "fifty"
+        mTensArray(4) = "sixty"
+        mTensArray(5) = "seventy"
+        mTensArray(6) = "eighty"
+        mTensArray(7) = "ninety"
+
+        mPlaceValues(0) = "hundred"
+        mPlaceValues(1) = "thousand"
+        mPlaceValues(2) = "million"
+        mPlaceValues(3) = "billion"
+        mPlaceValues(4) = "trillion"
+
+    End Sub
     Private Sub ResetForm()
         Reset_ship()
         Reset_days()
@@ -308,9 +354,9 @@ Public Class Form1
         Dim manifestSeq As String = "01"
         Dim manifestshipcode As String = Twocharshipcode & "S"
         Dim manifestTower As String = "   "
-        Dim ManifestFolder As String = "   "
+        Dim ManifestFolder As String = "    "
         Dim manifestGuestFirstName As String = "TEST"
-        Dim manifestGuestLastName As String = "GUEST "
+        Dim manifestGuestLastName As String = "GUEST"
         Dim manifestvoyage As String
         Dim manifestsex As String = "M"
         Dim manifestlang As String = "ENG"
@@ -331,11 +377,12 @@ Public Class Form1
 
 
 
-        For countermanifest = 0 To numberofguests
-            'countermanifest = countermanifest + 1
+        For countermanifest = 0 To numberofguests - 1
+            Dim number As Integer
+            number = countermanifest + 1
             If Len(validatedvoyage) < 5 Then
                 'Add in length padding 0's in the front of the voyage number
-                validatedvoyage.ToString.PadLeft(5, "0")
+                manifestvoyage = validatedvoyage.ToString.PadLeft(5, "0")
 
             End If
 
@@ -345,14 +392,14 @@ Public Class Form1
             Dim foliornd As Integer = RandomNumber(1000, 9999)
 
 
-            manifestcabin = RandomNumber(1000, 13000)
-            manifestbooking = RandomNumber(1000000, 2000000)
-            guestid = RandomNumber(100000000, 999999999)
+            manifestcabin = RandomNumber(1000, 13000).ToString
+            manifestbooking = RandomNumber(1000000, 2000000).ToString
+            guestid = RandomNumber(100000000, 999999999).ToString
             manifestFolio = foliostart & foliornd.ToString
 
 
             If Len(manifestcabin) < 5 Then
-                manifestcabin.PadRight(5)
+                manifestcabin = manifestcabin.PadRight(5)
             End If
 
 
@@ -362,20 +409,20 @@ Public Class Form1
             'Create guest name and pad right the string as well.
             Dim guestnumber As String
             Dim manifestguesttmplastname As String
-            guestnumber = ConvertNumberToWords(countermanifest)
-            manifestguesttmplastname = manifestGuestLastName & " " & guestnumber
+            guestnumber = ConvertNumberToWords(number)
+            manifestguesttmplastname = manifestGuestLastName & " " & guestnumber.ToUpper
             manifestGuestFirstName = manifestGuestFirstName.PadRight(15)
-            manifestGuesttmpLastName = manifestGuesttmpLastName.padright(25)
+            manifestguesttmplastname = manifestguesttmplastname.PadRight(25)
 
-            manifestentry = manifestshipcode & manifestvoyage & manifestStartdate & manifestGuestLastName & manifestGuestFirstName & ManifestStatus & manifestsex & manifestlang & manifestnationality & manifestcabin & manifestFolio & manifestbooking & manifestSeq & GroupID & groups & cabinsection & Loyalty & manifestStartdate & ManifestPort & manifestenddate & ManifestPort & diningtable & Diningroom & diningtime & manifestTower & ManifestFolder & setsail & guestid
+            manifestentry = manifestshipcode & manifestvoyage & manifestStartdate & manifestguesttmplastname & manifestGuestFirstName & ManifestStatus & manifestsex & manifestlang & manifestnationality & manifestcabin & manifestFolio & manifestbooking & manifestSeq & GroupID & groups & cabinsection & Loyalty & manifestStartdate & ManifestPort & manifestenddate & ManifestPort & diningtable & Diningroom & diningtime & manifestTower & ManifestFolder & setsail & guestid
             manifestdt.Rows.Add(manifestentry)
         Next
 
         Dim manifestsb As New StringBuilder
         Dim finalmanifestfile As String = "manifest_" & Twocharshipcode & "_" & validatedvoyage & ".ttx"
-        Dim manifestfullpath As String = Path.Combine(userdesktop, finalStafffile)
+        Dim manifestfullpath As String = Path.Combine(userdesktop, finalmanifestfile)
 
-        Dim manifeststreampath As String = stafffullpath
+        Dim manifeststreampath As String = manifestfullpath
 
         'Writes the Stringbuilder to file as a stream. The CSV file is RFC4180 compliant.
         'https://tools.ietf.org/html/rfc4180
@@ -599,54 +646,14 @@ Public Class Form1
     End Sub
 
     Private Function RandomNumber(min As Integer, max As Integer) As Integer
-        Dim random As New Random()
+
         Return random.Next(min, max)
     End Function 'RandomNumber
 
 
 
-    Public Sub New()
 
-            mOnesArray(0) = "one"
-            mOnesArray(1) = "two"
-            mOnesArray(2) = "three"
-            mOnesArray(3) = "four"
-            mOnesArray(4) = "five"
-            mOnesArray(5) = "six"
-            mOnesArray(6) = "seven"
-            mOnesArray(7) = "eight"
-            mOnesArray(8) = "nine"
-
-            mOneTensArray(0) = "ten"
-            mOneTensArray(1) = "eleven"
-            mOneTensArray(2) = "twelve"
-            mOneTensArray(3) = "thirteen"
-            mOneTensArray(4) = "fourteen"
-            mOneTensArray(5) = "fifteen"
-            mOneTensArray(6) = "sixteen"
-            mOneTensArray(7) = "seventeen"
-            mOneTensArray(8) = "eightteen"
-            mOneTensArray(9) = "nineteen"
-
-            mTensArray(0) = "twenty"
-            mTensArray(1) = "thirty"
-            mTensArray(2) = "forty"
-            mTensArray(3) = "fifty"
-            mTensArray(4) = "sixty"
-            mTensArray(5) = "seventy"
-            mTensArray(6) = "eighty"
-            mTensArray(7) = "ninety"
-
-            mPlaceValues(0) = "hundred"
-            mPlaceValues(1) = "thousand"
-            mPlaceValues(2) = "million"
-            mPlaceValues(3) = "billion"
-            mPlaceValues(4) = "trillion"
-
-        End Sub
-
-
-        Private Function GetOnes(ByVal OneDigit As Integer) As String
+    Private Function GetOnes(ByVal OneDigit As Integer) As String
 
             GetOnes = ""
 
