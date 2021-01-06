@@ -8,6 +8,21 @@ Imports System.Deployment.Application
 
 Public Class Form1
 
+    'AppWide Variable declarations
+
+    'Variables for the folders 
+    Public userdesktop As String = Environment.GetFolderPath(Environment.SpecialFolder.Desktop)
+    Public desktopdi As DirectoryInfo
+
+    'Variables for the setup of the application
+    Public DebugON As Boolean
+    Public firstrun As Boolean = True
+    Public numberofguests As Integer
+    Public runmode As String
+    Public manifest As Boolean
+
+
+    'Variables for the app
     Public days As Integer
     Public ship As String
     Public voyage As Integer
@@ -15,23 +30,20 @@ Public Class Form1
     Public embarkport As String = "1001"
     Public seaday As String = "0"
     Public dateformat As String = "MM/dd/yyyy"
-    Public userdesktop As String = Environment.GetFolderPath(Environment.SpecialFolder.Desktop)
-    Public desktopdi As DirectoryInfo
     Public StaffName As String = "COVID 19, Test User"
     Public Staffid As Integer = 10000
     Public cruiseline As String
-    Public DebugON As Boolean
-    Public firstrun As Boolean = True
-    Public numberofguests As Integer = 10
-    Public runmode As String
-    Public manifest As Boolean
+
+
+    'Variables for the conversion of number to words
     Public mOnesArray(8) As String
     Public mOneTensArray(9) As String
     Public mTensArray(7) As String
     Public mPlaceValues(4) As String
+
+    'variable for Random numbers. It is declared here as if it was done in the function it returns the same numbers each time due to the way that
+    'VB.NET uses the time to generate random numbers.
     Dim random As New Random()
-
-
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         'Call the reset Date Picker and ShipCode & Days
@@ -62,6 +74,9 @@ Public Class Form1
                 MsgBox(ex.Message, MsgBoxStyle.Critical)
                 End
             End Try
+            If DebugON = True Then
+                MsgBox("The current run mode is : " & runmode)
+            End If
             Setupform()
             firstrun = False
 
@@ -343,95 +358,99 @@ Public Class Form1
             Rfc4180Writer.WriteDataTable(staffdt, writer, True)
         End Using
 
-        'Create the Manifest file
-        Dim manifestdt As New DataTable
+        If manifest = True Then
+            'Create the Manifest file
+            Dim manifestdt As New DataTable
 
-        manifestdt.Columns.Add("ManifestEntry")
-
-
-        Dim ManifestPort As String = "MIA"
-        Dim ManifestStatus As String = "O"
-        Dim manifestSeq As String = "01"
-        Dim manifestshipcode As String = Twocharshipcode & "S"
-        Dim manifestTower As String = "   "
-        Dim ManifestFolder As String = "    "
-        Dim manifestGuestFirstName As String = "TEST"
-        Dim manifestGuestLastName As String = "GUEST"
-        Dim manifestvoyage As String
-        Dim manifestsex As String = "M"
-        Dim manifestlang As String = "ENG"
-        Dim manifestnationality As String = "USA"
-        Dim manifestcabin As String
-        Dim manifestFolio As String
-        Dim manifestbooking As String
-        Dim GroupID As String = "0    "
-        Dim groups As String = "0000"
-        Dim cabinsection As String = "074"
-        Dim Loyalty As String = "G"
-        Dim diningtable As String = "0  "
-        Dim Diningroom As String = "American Icon - Deck 3   "
-        Dim diningtime As String = "MY TIME "
-        Dim setsail As String
-        Dim guestid As String
-        Dim manifestentry As String
+            manifestdt.Columns.Add("ManifestEntry")
 
 
-
-        For countermanifest = 0 To numberofguests - 1
-            Dim number As Integer
-            number = countermanifest + 1
-            If Len(validatedvoyage) < 5 Then
-                'Add in length padding 0's in the front of the voyage number
-                manifestvoyage = validatedvoyage.ToString.PadLeft(5, "0")
-
-            End If
-
-            'Create random cabin, BookingID, GuestID, Folionumber
-
-            Dim foliostart As String = "984100022805"
-            Dim foliornd As Integer = RandomNumber(1000, 9999)
-
-
-            manifestcabin = RandomNumber(1000, 13000).ToString
-            manifestbooking = RandomNumber(1000000, 2000000).ToString
-            guestid = RandomNumber(100000000, 999999999).ToString
-            manifestFolio = foliostart & foliornd.ToString
-
-
-            If Len(manifestcabin) < 5 Then
-                manifestcabin = manifestcabin.PadRight(5)
-            End If
-
-
-            'Then create Setsail barcode from GuestID and Cabin
-            setsail = guestid & "-" & manifestcabin
-
-            'Create guest name and pad right the string as well.
-            Dim guestnumber As String
-            Dim manifestguesttmplastname As String
-            guestnumber = ConvertNumberToWords(number)
-            manifestguesttmplastname = manifestGuestLastName & " " & guestnumber.ToUpper
-            manifestGuestFirstName = manifestGuestFirstName.PadRight(15)
-            manifestguesttmplastname = manifestguesttmplastname.PadRight(25)
-
-            manifestentry = manifestshipcode & manifestvoyage & manifestStartdate & manifestguesttmplastname & manifestGuestFirstName & ManifestStatus & manifestsex & manifestlang & manifestnationality & manifestcabin & manifestFolio & manifestbooking & manifestSeq & GroupID & groups & cabinsection & Loyalty & manifestStartdate & ManifestPort & manifestenddate & ManifestPort & diningtable & Diningroom & diningtime & manifestTower & ManifestFolder & setsail & guestid
-            manifestdt.Rows.Add(manifestentry)
-        Next
-
-        Dim manifestsb As New StringBuilder
-        Dim finalmanifestfile As String = "manifest_" & Twocharshipcode & "_" & validatedvoyage & ".ttx"
-        Dim manifestfullpath As String = Path.Combine(userdesktop, finalmanifestfile)
-
-        Dim manifeststreampath As String = manifestfullpath
-
-        'Writes the Stringbuilder to file as a stream. The CSV file is RFC4180 compliant.
-        'https://tools.ietf.org/html/rfc4180
-
-        Using writer As StreamWriter = New StreamWriter(manifeststreampath)
-            ttxwriter.WriteDataTable(manifestdt, writer, False)
-        End Using
+            Dim ManifestPort As String = "MIA"
+            Dim ManifestStatus As String = "O"
+            Dim manifestSeq As String = "01"
+            Dim manifestshipcode As String = Twocharshipcode & "S"
+            Dim manifestTower As String = "   "
+            Dim ManifestFolder As String = "    "
+            Dim manifestGuestFirstName As String = "TEST"
+            Dim manifestGuestLastName As String = "GUEST"
+            Dim manifestvoyage As String
+            Dim manifestsex As String = "M"
+            Dim manifestlang As String = "ENG"
+            Dim manifestnationality As String = "USA"
+            Dim manifestcabin As String
+            Dim manifestFolio As String
+            Dim manifestbooking As String
+            Dim GroupID As String = "0    "
+            Dim groups As String = "0000"
+            Dim cabinsection As String = "074"
+            Dim Loyalty As String = "G"
+            Dim diningtable As String = "0  "
+            Dim Diningroom As String = "American Icon - Deck 3   "
+            Dim diningtime As String = "MY TIME "
+            Dim setsail As String
+            Dim guestid As String
+            Dim manifestentry As String
 
 
+
+            For countermanifest = 0 To numberofguests - 1
+                Dim number As Integer
+                number = countermanifest + 1
+                If Len(validatedvoyage) < 5 Then
+                    'Add in length padding 0's in the front of the voyage number
+                    manifestvoyage = validatedvoyage.ToString.PadLeft(5, "0")
+
+                End If
+
+                'Create random cabin, BookingID, GuestID, Folionumber
+
+                Dim foliostart As String = "984100022805"
+                Dim foliornd As Integer = RandomNumber(1000, 9999)
+
+
+                manifestcabin = RandomNumber(1000, 13000).ToString
+                manifestbooking = RandomNumber(1000000, 2000000).ToString
+                guestid = RandomNumber(100000000, 999999999).ToString
+                manifestFolio = foliostart & foliornd.ToString
+
+
+                If Len(manifestcabin) < 5 Then
+                    manifestcabin = manifestcabin.PadRight(5)
+                End If
+
+
+                'Then create Setsail barcode from GuestID and Cabin
+                setsail = guestid & "-" & manifestcabin
+
+                'Create guest name and pad right the string as well.
+                Dim guestnumber As String
+                Dim manifestguesttmplastname As String
+                guestnumber = ConvertNumberToWords(number)
+                manifestguesttmplastname = manifestGuestLastName & " " & guestnumber.ToUpper
+                manifestGuestFirstName = manifestGuestFirstName.PadRight(15)
+                manifestguesttmplastname = manifestguesttmplastname.PadRight(25)
+
+                manifestentry = manifestshipcode & manifestvoyage & manifestStartdate & manifestguesttmplastname & manifestGuestFirstName & ManifestStatus & manifestsex & manifestlang & manifestnationality & manifestcabin & manifestFolio & manifestbooking & manifestSeq & GroupID & groups & cabinsection & Loyalty & manifestStartdate & ManifestPort & manifestenddate & ManifestPort & diningtable & Diningroom & diningtime & manifestTower & ManifestFolder & setsail & guestid
+                If DebugON = True Then
+                    MsgBox(manifestentry)
+                End If
+                manifestdt.Rows.Add(manifestentry)
+            Next
+
+            Dim manifestsb As New StringBuilder
+            Dim finalmanifestfile As String = "manifest_" & Twocharshipcode & "_" & validatedvoyage & ".ttx"
+            Dim manifestfullpath As String = Path.Combine(userdesktop, finalmanifestfile)
+
+            Dim manifeststreampath As String = manifestfullpath
+
+            'Writes the Stringbuilder to file as a stream. The CSV file is RFC4180 compliant.
+            'https://tools.ietf.org/html/rfc4180
+
+            Using writer As StreamWriter = New StreamWriter(manifeststreampath)
+                ttxwriter.WriteDataTable(manifestdt, writer, False)
+            End Using
+
+        End If
         MsgBox("Done")
         ResetForm()
     End Sub

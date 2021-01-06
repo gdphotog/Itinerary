@@ -65,19 +65,19 @@ Namespace My
         
         <Global.System.Configuration.ApplicationScopedSettingAttribute(),  _
          Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute("10")>  _
-        Public ReadOnly Property NumberOfGuests() As String
+         Global.System.Configuration.DefaultSettingValueAttribute("LAB")>  _
+        Public ReadOnly Property RunMode() As String
             Get
-                Return CType(Me("NumberOfGuests"),String)
+                Return CType(Me("RunMode"),String)
             End Get
         End Property
         
         <Global.System.Configuration.ApplicationScopedSettingAttribute(),  _
          Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute("LAB")>  _
-        Public ReadOnly Property RunMode() As String
+         Global.System.Configuration.DefaultSettingValueAttribute("20")>  _
+        Public ReadOnly Property NumberOfGuests() As String
             Get
-                Return CType(Me("RunMode"),String)
+                Return CType(Me("NumberOfGuests"),String)
             End Get
         End Property
     End Class

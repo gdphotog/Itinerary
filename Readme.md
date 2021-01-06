@@ -6,4 +6,5 @@ Config file has been added to the project.
         DebugON - This will enable the debugging features added into the app which will show the message boxes at certain points of the system
         NumberOfGuests - This is a numeric value that will give the manifest length
         RunMode - This has 2 values (LAB or SHIP) In Lab mode it will create the manifest, Itinerary and Staff files whilst in Ship mode it will only create Itinerary and Staff files.
-
+    Hotfixes -
+        Random number generation was returning the same number each loop due to the way VB.net generates them based on time. 
