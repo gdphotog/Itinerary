@@ -224,9 +224,9 @@ Public Class Form1
         Dim portdate As String
         Dim voyagetovalidate As String
         Dim validatedvoyage As Integer
-        Dim manifestStartdate As String
-        Dim manifestenddate As String
-        Dim dateformat As String
+        Dim manifestStartdate As String = ""
+        Dim manifestenddate As String = ""
+
 
         'Validate that Cruise is an integer less than 99999
         voyagetovalidate = txtVoyageNumber.Text
@@ -373,7 +373,7 @@ Public Class Form1
             Dim ManifestFolder As String = "    "
             Dim manifestGuestFirstName As String = "TEST"
             Dim manifestGuestLastName As String = "GUEST"
-            Dim manifestvoyage As String
+            Dim manifestvoyage As String = "0"
             Dim manifestsex As String = "M"
             Dim manifestlang As String = "ENG"
             Dim manifestnationality As String = "USA"
@@ -700,114 +700,114 @@ Public Class Form1
 
         Public Function ConvertNumberToWords(ByVal NumberValue As String) As String
 
-            Dim Delimiter As String = " "
-            Dim TensDelimiter As String = "-"
-            Dim mNumberValue As String = ""
-            Dim mNumbers As String = ""
-            Dim mNumWord As String = ""
-            Dim mFraction As String = ""
-            Dim mNumberStack() As String
-            Dim j As Integer = 0
-            Dim i As Integer = 0
-            Dim mOneTens As Boolean = False
+        Dim Delimiter As String = " "
+        Dim TensDelimiter As String = "-"
+        Dim mNumberValue As String = ""
+        Dim mNumbers As String = ""
+        Dim mNumWord As String = ""
+        Dim mFraction As String = ""
+        Dim mNumberStack() As String
+        Dim j As Integer = 0
+        Dim i As Integer = 0
+        Dim mOneTens As Boolean = False
 
-            ConvertNumberToWords = ""
+        ConvertNumberToWords = ""
 
-            ' validate input
-            Try
-                j = CDbl(NumberValue)
-            Catch ex As Exception
+        ' validate input
+        Try
+            j = CDbl(NumberValue)
+        Catch ex As Exception
                 ConvertNumberToWords = "Invalid input."
-                Exit Function
-            End Try
+            Exit Function
+        End Try
 
-            ' get fractional part {if any}
-            If InStr(NumberValue, ".") = 0 Then
-                ' no fraction
-                mNumberValue = NumberValue
+        ' get fractional part {if any}
+        If InStr(NumberValue, ".") = 0 Then
+            ' no fraction
+            mNumberValue = NumberValue
+        Else
+            mNumberValue = Microsoft.VisualBasic.Left(NumberValue, InStr(NumberValue, ".") - 1)
+            mFraction = Mid(NumberValue, InStr(NumberValue, ".")) ' + 1)
+            mFraction = Math.Round(CSng(mFraction), 2) * 100
+
+            If CInt(mFraction) = 0 Then
+                mFraction = ""
             Else
-                mNumberValue = Microsoft.VisualBasic.Left(NumberValue, InStr(NumberValue, ".") - 1)
-                mFraction = Mid(NumberValue, InStr(NumberValue, ".")) ' + 1)
-                mFraction = Math.Round(CSng(mFraction), 2) * 100
-
-                If CInt(mFraction) = 0 Then
-                    mFraction = ""
-                Else
-                    mFraction = "&& " & mFraction & "/100"
-                End If
+                mFraction = "&& " & mFraction & "/100"
             End If
-            mNumbers = mNumberValue.ToCharArray
+        End If
+        mNumbers = mNumberValue.ToCharArray
 
-            ' move numbers to stack/array backwards
-            For j = mNumbers.Length - 1 To 0 Step -1
-                ReDim Preserve mNumberStack(i)
+        ' move numbers to stack/array backwards
+        For j = mNumbers.Length - 1 To 0 Step -1
+            ReDim Preserve mNumberStack(i)
 
-                mNumberStack(i) = mNumbers(j)
-                i += 1
-            Next
+            mNumberStack(i) = mNumbers(j)
+            i += 1
+        Next
 
-            For j = mNumbers.Length - 1 To 0 Step -1
-                Select Case j
-                    Case 0, 3, 6, 9, 12
-                        ' ones  value
-                        If Not mOneTens Then
-                            mNumWord &= GetOnes(Val(mNumberStack(j))) & Delimiter
-                        End If
-
-                        Select Case j
-                            Case 3
-                                ' thousands
-                                mNumWord &= mPlaceValues(1) & Delimiter
-
-                            Case 6
-                                ' millions
-                                mNumWord &= mPlaceValues(2) & Delimiter
-
-                            Case 9
-                                ' billions
-                                mNumWord &= mPlaceValues(3) & Delimiter
-
-                            Case 12
-                                ' trillions
-                                mNumWord &= mPlaceValues(4) & Delimiter
-                        End Select
-
-
-                    Case Is = 1, 4, 7, 10, 13
-                        ' tens value
-                        If Val(mNumberStack(j)) = 0 Then
-                            mNumWord &= GetOnes(Val(mNumberStack(j - 1))) & Delimiter
-                            mOneTens = True
-                            Exit Select
-                        End If
-
-                        If Val(mNumberStack(j)) = 1 Then
-                            mNumWord &= mOneTensArray(Val(mNumberStack(j - 1))) & Delimiter
-                            mOneTens = True
-                            Exit Select
-                        End If
-
-                        mNumWord &= GetTens(Val(mNumberStack(j)))
-
-                        ' this places the tensdelimiter; check for succeeding 0
-                        If Val(mNumberStack(j - 1)) <> 0 Then
-                            mNumWord &= TensDelimiter
-                        End If
-                        mOneTens = False
-
-                    Case Else
-                        ' hundreds value 
+        For j = mNumbers.Length - 1 To 0 Step -1
+            Select Case j
+                Case 0, 3, 6, 9, 12
+                    ' ones  value
+                    If Not mOneTens Then
                         mNumWord &= GetOnes(Val(mNumberStack(j))) & Delimiter
+                    End If
 
-                        If Val(mNumberStack(j)) <> 0 Then
-                            mNumWord &= mPlaceValues(0) & Delimiter
-                        End If
-                End Select
-            Next
+                    Select Case j
+                        Case 3
+                            ' thousands
+                            mNumWord &= mPlaceValues(1) & Delimiter
 
-            Return mNumWord & mFraction
+                        Case 6
+                            ' millions
+                            mNumWord &= mPlaceValues(2) & Delimiter
 
-        End Function
+                        Case 9
+                            ' billions
+                            mNumWord &= mPlaceValues(3) & Delimiter
+
+                        Case 12
+                            ' trillions
+                            mNumWord &= mPlaceValues(4) & Delimiter
+                    End Select
+
+
+                Case Is = 1, 4, 7, 10, 13
+                    ' tens value
+                    If Val(mNumberStack(j)) = 0 Then
+                        mNumWord &= GetOnes(Val(mNumberStack(j - 1))) & Delimiter
+                        mOneTens = True
+                        Exit Select
+                    End If
+
+                    If Val(mNumberStack(j)) = 1 Then
+                        mNumWord &= mOneTensArray(Val(mNumberStack(j - 1))) & Delimiter
+                        mOneTens = True
+                        Exit Select
+                    End If
+
+                    mNumWord &= GetTens(Val(mNumberStack(j)))
+
+                    ' this places the tensdelimiter; check for succeeding 0
+                    If Val(mNumberStack(j - 1)) <> 0 Then
+                        mNumWord &= TensDelimiter
+                    End If
+                    mOneTens = False
+
+                Case Else
+                    ' hundreds value 
+                    mNumWord &= GetOnes(Val(mNumberStack(j))) & Delimiter
+
+                    If Val(mNumberStack(j)) <> 0 Then
+                        mNumWord &= mPlaceValues(0) & Delimiter
+                    End If
+            End Select
+        Next
+
+        Return mNumWord & mFraction
+
+    End Function
 
 
 
