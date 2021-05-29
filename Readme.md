@@ -1,6 +1,6 @@
 ﻿This app is for creating a basic Itinerary to enable the IQWF system to stay running when the ships are in lockdown.
 
-1/5/21 - Update 1.0.0.3
+May 29, 2021 - Update 1.0.0.5
 Config file has been added to the project.
     3 options in the config file:
         DebugON - This will enable the debugging features added into the app which will show the message boxes at certain points of the system
