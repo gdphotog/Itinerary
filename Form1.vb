@@ -46,42 +46,50 @@ Public Class Form1
     Dim random As New Random()
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        'Call the reset Date Picker and ShipCode & Days
+    'Call the reset Date Picker and ShipCode & Days
 
 
-        If firstrun = True Then
+    If firstrun = True Then
 
-            'Read settings from app config file
-            Try
-                DebugON = Convert.ToBoolean(My.Settings.DebugOn)
-                runmode = My.Settings.RunMode.ToUpper
-                If runmode = "SHIP" Then
-                    manifest = False
-                ElseIf runmode = "LAB" Then
-                    manifest = True
-                    Try
-                        numberofguests = Integer.Parse(My.Settings.NumberOfGuests)
+      'Read settings from app config file
+      Try
+        DebugON = Convert.ToBoolean(My.Settings.DebugOn)
+        runmode = My.Settings.RunMode.ToUpper
+        If runmode = "SHIP" Then
+          manifest = False
+        ElseIf runmode = "LAB" Then
+          manifest = True
+          Try
+            numberofguests = Integer.Parse(My.Settings.NumberOfGuests)
 
-                    Catch ex As Exception
-                        MsgBox(ex.Message, MsgBoxStyle.Critical, "Number of Guests set incorrectly in App Config")
-                        End
-                    End Try
-                Else
-                    Throw New Exception("RunMode not set correctly in application Config file")
-                End If
+          Catch ex As Exception
+            MsgBox(ex.Message, MsgBoxStyle.Critical, "Number of Guests set incorrectly in App Config")
+            End
+          End Try
+        ElseIf runmode = "HOME" Then
+          manifest = True
+          Try
+            numberofguests = Integer.Parse(My.Settings.NumberOfGuests)
 
-            Catch ex As Exception
-                MsgBox(ex.Message, MsgBoxStyle.Critical)
-                End
-            End Try
-            If DebugON = True Then
-                MsgBox("The current run mode is : " & runmode)
-            End If
-            Setupform()
-            firstrun = False
-
+          Catch ex As Exception
+            MsgBox(ex.Message, MsgBoxStyle.Critical, "Number of Guests set incorrectly in App Config")
+            End
+          End Try
         Else
-            ResetForm()
+          Throw New Exception("RunMode not set correctly in application Config file")
+        End If
+      Catch ex As Exception
+        MsgBox(ex.Message, MsgBoxStyle.Critical)
+        End
+      End Try
+      If DebugON = True Then
+        MsgBox("The current run mode is : " & runmode)
+      End If
+      Setupform()
+      firstrun = False
+
+    Else
+      ResetForm()
         End If
 
     End Sub
@@ -91,10 +99,10 @@ Public Class Form1
         Populate_Days()
 
         If ApplicationDeployment.IsNetworkDeployed Then
-            lblVersionNumber.Text = "Application Version: " & ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString
-        Else
-            lblVersionNumber.Text = "Application Version: " & Application.ProductVersion
-        End If
+      lblVersionNumber.Text = "Application Version: " & ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString & "     RunMode: " & runmode
+    Else
+      lblVersionNumber.Text = "Application Version: " & Application.ProductVersion & "     RunMode: " & runmode
+    End If
 
     End Sub
 
@@ -374,8 +382,8 @@ Public Class Form1
             Dim manifestGuestFirstName As String = "TEST"
             Dim manifestGuestLastName As String = "GUEST"
             Dim manifestvoyage As String = "0"
-            Dim manifestsex As String = "M"
-            Dim manifestlang As String = "ENG"
+      Dim manifestsex As String = "M"
+      Dim manifestlang As String = "ENG"
             Dim manifestnationality As String = "USA"
             Dim manifestcabin As String
             Dim manifestFolio As String
@@ -393,51 +401,67 @@ Public Class Form1
 
 
 
-            For countermanifest = 0 To numberofguests - 1
-                Dim number As Integer
-                number = countermanifest + 1
-                If Len(validatedvoyage) < 5 Then
-                    'Add in length padding 0's in the front of the voyage number
-                    manifestvoyage = validatedvoyage.ToString.PadLeft(5, "0")
+      For countermanifest = 0 To numberofguests - 1
+        Dim number As Integer
+        number = countermanifest + 1
+        If Len(validatedvoyage) < 5 Then
+          'Add in length padding 0's in the front of the voyage number
+          manifestvoyage = validatedvoyage.ToString.PadLeft(5, "0")
 
-                End If
+        End If
 
-                'Create random cabin, BookingID, GuestID, Folionumber
+        'Create random cabin, BookingID, GuestID, Folionumber
 
-                Dim foliostart As String = "984100022805"
-                Dim foliornd As Integer = RandomNumber(1000, 9999)
-
-
-                manifestcabin = RandomNumber(1000, 13000).ToString
-                manifestbooking = RandomNumber(1000000, 2000000).ToString
-                guestid = RandomNumber(100000000, 999999999).ToString
-                manifestFolio = foliostart & foliornd.ToString
+        Dim foliostart As String = "984100022805"
+        Dim foliornd As Integer = RandomNumber(1000, 9999)
 
 
-                If Len(manifestcabin) < 5 Then
-                    manifestcabin = manifestcabin.PadRight(5)
-                End If
+        manifestcabin = RandomNumber(1000, 13000).ToString
+        manifestbooking = RandomNumber(1000000, 2000000).ToString
+        guestid = RandomNumber(100000000, 999999999).ToString
+
+        If runmode = "HOME" Then
+          Select Case countermanifest
+            Case 0
+              manifestFolio = "9841000253346800"
+            Case 2
+              manifestFolio = "9841000229799801"
+            Case 4
+              manifestFolio = "9841000139275900"
+            Case 6
+              manifestFolio = "9841000123604003"
+            Case Else
+              manifestFolio = foliostart & foliornd.ToString
+
+          End Select
+        Else
+          manifestFolio = foliostart & foliornd.ToString
+        End If
+
+        If Len(manifestcabin) < 5 Then
+          manifestcabin = manifestcabin.PadRight(5)
+        End If
 
 
-                'Then create Setsail barcode from GuestID and Cabin
-                setsail = guestid & "-" & manifestcabin
+        'Then create Setsail barcode from GuestID and Cabin
+        setsail = guestid & "-" & manifestcabin
 
-                'Create guest name and pad right the string as well.
-                Dim guestnumber As String
-                Dim manifestguesttmplastname As String
-                guestnumber = ConvertNumberToWords(number)
-                manifestguesttmplastname = manifestGuestLastName & " " & guestnumber.ToUpper
-                manifestGuestFirstName = manifestGuestFirstName.PadRight(15)
-                manifestguesttmplastname = manifestguesttmplastname.PadRight(25)
+        'Create guest name and pad right the string as well.
+        Dim guestnumber As String
+        Dim manifestguesttmplastname As String
+        guestnumber = ConvertNumberToWords(number)
+        manifestguesttmplastname = manifestGuestLastName & " " & guestnumber.ToUpper
+        manifestGuestFirstName = manifestGuestFirstName.PadRight(15)
+        manifestguesttmplastname = manifestguesttmplastname.PadRight(25)
 
-                manifestentry = manifestshipcode & manifestvoyage & manifestStartdate & manifestguesttmplastname & manifestGuestFirstName & ManifestStatus & manifestsex & manifestlang & manifestnationality & manifestcabin & manifestFolio & manifestbooking & manifestSeq & GroupID & groups & cabinsection & Loyalty & manifestStartdate & ManifestPort & manifestenddate & ManifestPort & diningtable & Diningroom & diningtime & manifestTower & ManifestFolder & setsail & guestid
-                If DebugON = True Then
-                    MsgBox(manifestentry)
-                End If
-                manifestdt.Rows.Add(manifestentry)
-            Next
+        manifestentry = manifestshipcode & manifestvoyage & manifestStartdate & manifestguesttmplastname & manifestGuestFirstName & ManifestStatus & manifestsex & manifestlang & manifestnationality & manifestcabin & manifestFolio & manifestbooking & manifestSeq & GroupID & groups & cabinsection & Loyalty & manifestStartdate & ManifestPort & manifestenddate & ManifestPort & diningtable & Diningroom & diningtime & manifestTower & ManifestFolder & setsail & guestid
+        If DebugON = True Then
+          MsgBox(manifestentry)
+        End If
+        manifestdt.Rows.Add(manifestentry)
+      Next
 
-            Dim manifestsb As New StringBuilder
+      Dim manifestsb As New StringBuilder
             Dim finalmanifestfile As String = "manifest_" & Twocharshipcode & "_" & validatedvoyage & ".ttx"
             Dim manifestfullpath As String = Path.Combine(userdesktop, finalmanifestfile)
 
