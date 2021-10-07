@@ -55,33 +55,39 @@ Public Class Form1
       Try
         DebugON = Convert.ToBoolean(My.Settings.DebugOn)
         runmode = My.Settings.RunMode.ToUpper
-        If runmode = "SHIP" Then
-          manifest = False
-        ElseIf runmode = "LAB" Then
-          manifest = True
-          Try
-            numberofguests = Integer.Parse(My.Settings.NumberOfGuests)
 
-          Catch ex As Exception
-            MsgBox(ex.Message, MsgBoxStyle.Critical, "Number of Guests set incorrectly in App Config")
-            End
-          End Try
-        ElseIf runmode = "HOME" Then
-          manifest = True
-          Try
-            numberofguests = Integer.Parse(My.Settings.NumberOfGuests)
+        'Use CASE for the runmode setting
+        Select Case runmode
 
-          Catch ex As Exception
-            MsgBox(ex.Message, MsgBoxStyle.Critical, "Number of Guests set incorrectly in App Config")
-            End
-          End Try
-        Else
-          Throw New Exception("RunMode not set correctly in application Config file")
-        End If
+          Case "SHIP"
+            manifest = False
+
+          Case "LAB"
+            manifest = True
+
+          Case "HOME"
+            manifest = True
+
+          Case Else
+            Throw New Exception("RunMode not set correctly in application Config file")
+
+        End Select
       Catch ex As Exception
         MsgBox(ex.Message, MsgBoxStyle.Critical)
         End
       End Try
+
+      'If Manifest is needed then parse to see if Guest is integer in AppConfig file.
+      If manifest = True Then
+        Try
+          numberofguests = Integer.Parse(My.Settings.NumberOfGuests)
+        Catch ex As Exception
+          MsgBox(ex.Message, MsgBoxStyle.Critical, "Number of Guests set incorrectly in App Config")
+          End
+        End Try
+      End If
+
+      'If Debug is enabled show message box
       If DebugON = True Then
         MsgBox("The current run mode is : " & runmode)
       End If
@@ -98,10 +104,19 @@ Public Class Form1
         PopulateShipcodes()
         Populate_Days()
 
-        If ApplicationDeployment.IsNetworkDeployed Then
-      lblVersionNumber.Text = "Application Version: " & ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString & "     RunMode: " & runmode
+    If ApplicationDeployment.IsNetworkDeployed Then
+      If runmode <> "SHIP" Then
+        lblVersionNumber.Text = "Application Version: " & ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString & "     RunMode: " & runmode
+      Else
+        lblVersionNumber.Text = "Application Version: " & ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString
+      End If
     Else
-      lblVersionNumber.Text = "Application Version: " & Application.ProductVersion & "     RunMode: " & runmode
+      If runmode <> "SHIP" Then
+        lblVersionNumber.Text = "Application Version: " & Application.ProductVersion & "     RunMode: " & runmode
+      Else
+        lblVersionNumber.Text = "Application Version: " & Application.ProductVersion
+      End If
+
     End If
 
     End Sub
